@@ -26,7 +26,7 @@ class TransferApiData {
             let row = this.querySheet.getRange('B' + rowIndex + ':' + lastCol + rowIndex);
             if (client && client !== 'Client' && (rowIndex < clientLength + 1)) {
                 queryValues['Leads'][client] = row.getValues();
-            } else if (client && client !== 'Client' && (rowIndex > clientLength + 1)) {
+            } else if (client && client !== 'Client' && (rowIndex > clientLength + 1) && client !== 'AcademixDirectCall') {
                 queryValues['Revenue'][client] = row.getValues();
             }
         }
