@@ -6,6 +6,7 @@ class TransferApiData {
         this.metricsSpreadsheet = SpreadsheetApp.openById('1xjeR7V4Qm5OCHW2iWo1zjbVriIX1NsmMUzK1sLNhK1g');
         this.webSheet = this.metricsSpreadsheet.getSheetByName('Web Funnel');
         this.callSheet = this.metricsSpreadsheet.getSheetByName('Call Center Funnel');
+        this.exclusions = ['AcademixDirectCall']
         this.queryValues = this.getQueryData();
     }
     transferQueryData() {
@@ -26,7 +27,10 @@ class TransferApiData {
             let row = this.querySheet.getRange('B' + rowIndex + ':' + lastCol + rowIndex);
             if (client && client !== 'Client' && (rowIndex < clientLength + 1)) {
                 queryValues['Leads'][client] = row.getValues();
-            } else if (client && client !== 'Client' && (rowIndex > clientLength + 1) && client !== 'AcademixDirectCall') {
+            } else if (client
+                && client !== 'Client'
+                && (rowIndex > clientLength + 1)
+                && !this.exclusions.includes(client)) {
                 queryValues['Revenue'][client] = row.getValues();
             }
         }

@@ -5,8 +5,9 @@ class QuerySheet {
         this.querySheet = this.ss.getSheetByName('Query Data');
         this.dataSheet = this.ss.getSheetByName('API Overview - For Data Studio');
         this.queryData = this.querySheet.getDataRange().getValues();
-        this.daysBackCol = this.findDaysBackCol();
-        this.leadsStartingRow = 2;
+        this.queryDays = 30;  // number of days to run queries
+        this.daysBackCol = this.findDaysBackCol();  // dynamically gets today minus this.queryDays column letter
+        this.leadsStartingRow = 2;  // row after the header row
         this.clientLength = (this.queryData.length / 2) - 1;  // for blank row and header
         this.revenueStartingRow = this.leadsStartingRow + this.clientLength + 1;  // for blank row
     }
@@ -26,11 +27,13 @@ class QuerySheet {
         const cell = this.querySheet.getRange(columnToLetter(this.daysBackCol) + startingRow);
         cell.setValue(this.buildQuery(sumCol, clientCell));
 
-        const destination = this.querySheet.getRange(startingRow, cell.getColumn(), numRows, 30);
+        const destination = this.querySheet.getRange(startingRow, cell.getColumn(), numRows, this.queryDays);
         cell.copyTo(destination);
     }
     findDaysBackCol() {
         const daysBack = this.daysBack()
+        // Could potentially accomplish this with a hash table, but I still need the index so
+        // I'm not sure how much faster it would actually be
         for (let i = 0; i < this.queryData[0].length; i++) {
             if (typeof this.queryData[0][i] === 'object'){
                 if (this.formattedDate(this.queryData[0][i]) === daysBack) {
@@ -49,8 +52,7 @@ class QuerySheet {
         return "=IFNA(QUERY(" + queryDataRange + ", " + '"' + leadsQuery + '"' + "), 0)";
     }
     daysBack() {
-        const queryDays = 30  // how many days back to run queries
-        const daysBack = new Date().setDate(new Date().getDate() - queryDays)
+        const daysBack = new Date().setDate(new Date().getDate() - this.queryDays)
         const daysBackDate = new Date(daysBack)
         return this.formattedDate(daysBackDate)
     }

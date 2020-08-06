@@ -1,3 +1,34 @@
+function onOpen(e) {
+    let menu = SpreadsheetApp.getUi().createMenu('Custom Functions');
+    menu.addItem('Update and Transfer Data', 'updateTransferData')
+        .addItem('Import Data', 'importCsv')
+        .addItem('Transfer Data', 'transferQueryData')
+        .addItem('Run Queries', 'fillQueries')
+        .addToUi();
+}
+
+function updateTransferData() {
+    importCsv();
+    fillQueries();
+    transferQueryData();
+}
+
+function importCsv () {
+    const dataImport = new ImportData();
+    dataImport.importCSVData();
+}
+
+function columnToLetter(columnNum) {
+    let temp, letter = '';
+    while (columnNum > 0) {
+        temp = (columnNum - 1) % 26;
+        letter = String.fromCharCode(temp + 65) + letter;
+        columnNum = (columnNum - temp - 1) / 26;
+    }
+    return letter;
+}
+
+
 class ImportData {
     constructor() {
         this.sheet = SpreadsheetApp.openById("1jPFeGJgeU0nyHZx9DXTL0wagIQM3Cbl5AyzD37ky3ck")
@@ -42,35 +73,4 @@ class ImportData {
             formatRange.setNumberFormat(format);
         }
     }
-}
-
-
-function onOpen(e) {
-    let menu = SpreadsheetApp.getUi().createMenu('Custom Functions');
-    menu.addItem('Update and Transfer Data', 'updateTransferData')
-        .addItem('Import Data', 'importCsv')
-        .addItem('Transfer Data', 'transferQueryData')
-        .addItem('Run Queries - Yesterday', 'fillQueries')
-        .addToUi();
-}
-
-function columnToLetter(columnNum) {
-    let temp, letter = '';
-    while (columnNum > 0) {
-        temp = (columnNum - 1) % 26;
-        letter = String.fromCharCode(temp + 65) + letter;
-        columnNum = (columnNum - temp - 1) / 26;
-    }
-    return letter;
-}
-
-function updateTransferData() {
-    importCsv();
-    fillQueries();
-    transferQueryData();
-}
-
-function importCsv () {
-    const dataImport = new ImportData();
-    dataImport.importCSVData();
 }
